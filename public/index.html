@@ -20,12 +20,24 @@
       html,
       body,
       #root {
+        width: 100%;
         height: 100%;
+        min-height: 100%;
+        margin: 0;
+        padding: 0;
       }
 
       body {
-        margin: 0;
         background-color: #fff6f0;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Required for React Native Web flex layouts */
+      #root {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
       }
     </style>
   </head>

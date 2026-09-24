@@ -28,7 +28,7 @@ function Root() {
   }
 
   return (
-    <>
+    <View style={styles.flex}>
       <TabNavigator />
       <CelebrationModal
         visible={Boolean(celebration)}
@@ -38,7 +38,7 @@ function Root() {
         coins={celebration?.coins ?? 0}
         onClose={dismissCelebration}
       />
-    </>
+    </View>
   );
 }
 
@@ -60,7 +60,7 @@ export default function App() {
 
   return (
     <GestureHandlerRootView style={styles.flex}>
-      <SafeAreaProvider>
+      <SafeAreaProvider style={styles.flex}>
         <AppProvider>
           {/* Keep the GitHub Pages URL under /life-management-app; path linking
               would rewrite to /Home and leave the project subpath (blank/404). */}

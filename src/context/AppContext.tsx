@@ -601,10 +601,15 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     );
   }
 
-  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
+  return (
+    <AppContext.Provider value={value}>
+      <View style={loadingStyles.flex}>{children}</View>
+    </AppContext.Provider>
+  );
 }
 
 const loadingStyles = StyleSheet.create({
+  flex: { flex: 1 },
   loading: {
     flex: 1,
     alignItems: 'center',
