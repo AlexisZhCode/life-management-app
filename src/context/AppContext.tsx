@@ -6,8 +6,10 @@ import React, {
   useMemo,
   useState,
 } from 'react';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import * as Haptics from 'expo-haptics';
-import { loadAppData, saveAppData } from '../storage/storage';
+import { defaultAppData, loadAppData, saveAppData } from '../storage/storage';
+import { colors } from '../theme/colors';
 import type {
   AppData,
   Habit,
@@ -98,10 +100,21 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [celebration, setCelebration] = useState<Celebration>(null);
 
   useEffect(() => {
-    loadAppData().then((loaded) => {
-      setData(loaded);
-      setReady(true);
-    });
+    let cancelled = false;
+    loadAppData()
+      .then((loaded) => {
+        if (cancelled) return;
+        setData(loaded);
+        setReady(true);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setData(defaultAppData());
+        setReady(true);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   useEffect(() => {
@@ -580,10 +593,25 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     latestRest,
   ]);
 
-  if (!value) return null;
+  if (!value) {
+    return (
+      <View style={loadingStyles.loading}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
+  }
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }
+
+const loadingStyles = StyleSheet.create({
+  loading: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.background,
+  },
+});
 
 export function useApp() {
   const ctx = useContext(AppContext);

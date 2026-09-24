@@ -1,5 +1,5 @@
 import React from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Platform, StyleSheet, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import {
@@ -43,14 +43,14 @@ function Root() {
 }
 
 export default function App() {
-  const [fontsLoaded] = useFonts({
+  const [fontsLoaded, fontError] = useFonts({
     Nunito_500Medium,
     Nunito_600SemiBold,
     Nunito_700Bold,
     Nunito_800ExtraBold,
   });
 
-  if (!fontsLoaded) {
+  if (!fontsLoaded && !fontError) {
     return (
       <View style={styles.loading}>
         <ActivityIndicator size="large" color={colors.primary} />
@@ -62,7 +62,15 @@ export default function App() {
     <GestureHandlerRootView style={styles.flex}>
       <SafeAreaProvider>
         <AppProvider>
-          <NavigationContainer>
+          {/* Keep the GitHub Pages URL under /life-management-app; path linking
+              would rewrite to /Home and leave the project subpath (blank/404). */}
+          <NavigationContainer
+            linking={
+              Platform.OS === 'web'
+                ? { enabled: false, prefixes: [] }
+                : undefined
+            }
+          >
             <StatusBar style="dark" />
             <Root />
           </NavigationContainer>

@@ -36,7 +36,9 @@ jobs:
         run: npm ci
 
       - name: Export web app
-        run: npm run build:web
+        run: |
+          npm run build:web
+          cp dist/index.html dist/404.html
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
