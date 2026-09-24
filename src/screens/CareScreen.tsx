@@ -193,7 +193,7 @@ export function CareScreen() {
           </Pressable>
         </View>
         {glasses >= goal ? (
-          <Text style={styles.hint}>Goal reached — you're glowing ✨</Text>
+          <Text style={styles.hint}>Goal reached — you’re glowing ✨</Text>
         ) : (
           <Text style={styles.hint}>Hit your sip goal for +3 ⭐</Text>
         )}
@@ -232,7 +232,7 @@ export function CareScreen() {
           <Text style={styles.primaryText}>Save plate (+2 ⭐)</Text>
         </Pressable>
 
-        <Text style={styles.subheading}>Today's plates</Text>
+        <Text style={styles.subheading}>Today’s plates</Text>
         {todayMeals.length === 0 ? (
           <Text style={styles.hint}>Nothing logged yet — start with a little bite.</Text>
         ) : (

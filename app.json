@@ -6,11 +6,6 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "splash": {
-      "image": "./assets/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#FFF6F0"
-    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.bloom.lifemanagement"
@@ -26,10 +21,22 @@
       "predictiveBackGestureEnabled": false
     },
     "web": {
+      "output": "single",
       "favicon": "./assets/favicon.png"
     },
+    "experiments": {
+      "baseUrl": "/life-management-app"
+    },
     "plugins": [
-      "expo-font"
+      "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#FFF6F0"
+        }
+      ]
     ]
   }
 }

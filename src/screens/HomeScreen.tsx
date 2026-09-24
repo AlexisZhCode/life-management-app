@@ -85,7 +85,7 @@ export function HomeScreen() {
         />
       </View>
 
-      <Text style={styles.section}>Today's peek</Text>
+      <Text style={styles.section}>Today’s peek</Text>
       <SoftCard>
         <Row
           label="Mood"

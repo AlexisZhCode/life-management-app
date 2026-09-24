@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Animated,
   Modal,
@@ -26,8 +26,8 @@ export function CelebrationModal({
   coins,
   onClose,
 }: Props) {
-  const scale = useRef(new Animated.Value(0.7)).current;
-  const opacity = useRef(new Animated.Value(0)).current;
+  const [scale] = useState(() => new Animated.Value(0.7));
+  const [opacity] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
     if (!visible) return;
