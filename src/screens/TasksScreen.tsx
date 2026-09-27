@@ -75,7 +75,7 @@ export function TasksScreen() {
           ))}
         </View>
         <Pressable style={styles.addBtn} onPress={onAdd}>
-          <Text style={styles.addText}>Add task ✨</Text>
+          <Text style={styles.addText}>Add task</Text>
         </Pressable>
       </SoftCard>
 
@@ -100,7 +100,7 @@ export function TasksScreen() {
 
       {visible.length === 0 ? (
         <EmptyState
-          emoji={tab === 'open' ? '🍃' : '🎉'}
+          icon={tab === 'open' ? 'empty-clear' : 'empty-done'}
           title={tab === 'open' ? 'All clear' : 'No finished tasks yet'}
           message={
             tab === 'open'

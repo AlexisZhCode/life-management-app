@@ -10,6 +10,7 @@ import {
 import { CoinBadge } from '../components/CoinBadge';
 import { Screen } from '../components/Screen';
 import { SoftCard } from '../components/SoftCard';
+import { BloomIcon, type BloomIconName } from '../icons/BloomIcon';
 import { useApp } from '../context/AppContext';
 import { colors } from '../theme/colors';
 import type { MealKind, RestLog } from '../types';
@@ -24,19 +25,19 @@ import { DEFAULT_SIP_GOAL } from '../utils/rewards';
 
 const BEDTIMES = ['21:00', '21:30', '22:00', '22:30', '23:00', '23:30', '00:00'];
 const WAKETIMES = ['05:30', '06:00', '06:30', '07:00', '07:30', '08:00', '08:30', '09:00'];
-const QUALITY: { value: RestLog['quality']; emoji: string; label: string }[] = [
-  { value: 1, emoji: '😫', label: 'Rough' },
-  { value: 2, emoji: '😕', label: 'Okay' },
-  { value: 3, emoji: '😐', label: 'Fine' },
-  { value: 4, emoji: '🙂', label: 'Good' },
-  { value: 5, emoji: '😴', label: 'Dreamy' },
+const QUALITY: { value: RestLog['quality']; icon: BloomIconName; label: string }[] = [
+  { value: 1, icon: 'rest-rough', label: 'Rough' },
+  { value: 2, icon: 'rest-okay', label: 'Okay' },
+  { value: 3, icon: 'rest-fine', label: 'Fine' },
+  { value: 4, icon: 'rest-good', label: 'Good' },
+  { value: 5, icon: 'rest-dreamy', label: 'Dreamy' },
 ];
 
-const MEAL_KINDS: { kind: MealKind; emoji: string; label: string }[] = [
-  { kind: 'sunrise', emoji: '🌅', label: 'Sunrise plate' },
-  { kind: 'midday', emoji: '🌞', label: 'Midday plate' },
-  { kind: 'evening', emoji: '🌙', label: 'Evening plate' },
-  { kind: 'bite', emoji: '🍪', label: 'Little bite' },
+const MEAL_KINDS: { kind: MealKind; icon: BloomIconName; label: string }[] = [
+  { kind: 'sunrise', icon: 'meal-sunrise', label: 'Sunrise plate' },
+  { kind: 'midday', icon: 'meal-midday', label: 'Midday plate' },
+  { kind: 'evening', icon: 'meal-evening', label: 'Evening plate' },
+  { kind: 'bite', icon: 'meal-bite', label: 'Little bite' },
 ];
 
 export function CareScreen() {
@@ -99,7 +100,7 @@ export function CareScreen() {
     >
       {/* Sweet Rest */}
       <SoftCard tint={colors.lavenderSoft} style={styles.block}>
-        <Text style={styles.emoji}>🌙</Text>
+        <BloomIcon name="rest" size={48} />
         <Text style={styles.heading}>Sweet Rest</Text>
         <Text style={styles.copy}>
           Set your dream rhythm · about {idealHours} of rest
@@ -143,7 +144,7 @@ export function CareScreen() {
               onPress={() => setQuality(item.value)}
               style={[styles.qualityBtn, quality === item.value && styles.qualityActive]}
             >
-              <Text style={styles.qualityEmoji}>{item.emoji}</Text>
+              <BloomIcon name={item.icon} size={28} />
               <Text style={styles.qualityLabel}>{item.label}</Text>
             </Pressable>
           ))}
@@ -151,22 +152,27 @@ export function CareScreen() {
 
         <Pressable style={styles.primaryBtn} onPress={onLogRest}>
           <Text style={styles.primaryText}>
-            {todayRest ? 'Update rest log' : 'Log sweet rest (+3 ⭐)'}
+            {todayRest ? 'Update rest log' : 'Log sweet rest (+3 coins)'}
           </Text>
         </Pressable>
 
         {latestRest ? (
-          <Text style={styles.hint}>
-            Last log · {formatFriendlyDate(latestRest.date)} ·{' '}
-            {formatDuration(minutesBetween(latestRest.bedtime, latestRest.wakeTime))} ·{' '}
-            {QUALITY.find((q) => q.value === latestRest.quality)?.emoji}
-          </Text>
+          <View style={styles.hintRow}>
+            <Text style={styles.hint}>
+              Last log · {formatFriendlyDate(latestRest.date)} ·{' '}
+              {formatDuration(minutesBetween(latestRest.bedtime, latestRest.wakeTime))}
+            </Text>
+            <BloomIcon
+              name={QUALITY.find((q) => q.value === latestRest.quality)?.icon ?? 'rest'}
+              size={22}
+            />
+          </View>
         ) : null}
       </SoftCard>
 
       {/* Little Sips */}
       <SoftCard tint={colors.secondarySoft} style={styles.block}>
-        <Text style={styles.emoji}>💧</Text>
+        <BloomIcon name="habit-sip" size={48} />
         <Text style={styles.heading}>Little Sips</Text>
         <Text style={styles.copy}>
           {glasses} of {goal} cozy glasses today
@@ -178,9 +184,11 @@ export function CareScreen() {
 
         <View style={styles.glasses}>
           {Array.from({ length: goal }).map((_, index) => (
-            <Text key={index} style={styles.glass}>
-              {index < glasses ? '🫧' : '⭘'}
-            </Text>
+            <BloomIcon
+              key={index}
+              name={index < glasses ? 'glass-full' : 'glass-empty'}
+              size={26}
+            />
           ))}
         </View>
 
@@ -193,15 +201,15 @@ export function CareScreen() {
           </Pressable>
         </View>
         {glasses >= goal ? (
-          <Text style={styles.hint}>Goal reached — you’re glowing ✨</Text>
+          <Text style={styles.hint}>Goal reached. You’re glowing.</Text>
         ) : (
-          <Text style={styles.hint}>Hit your sip goal for +3 ⭐</Text>
+          <Text style={styles.hint}>Hit your sip goal for +3 coins</Text>
         )}
       </SoftCard>
 
       {/* Nourish */}
       <SoftCard tint={colors.accentSoft} style={styles.block}>
-        <Text style={styles.emoji}>🍽️</Text>
+        <BloomIcon name="nourish" size={48} />
         <Text style={styles.heading}>Nourish</Text>
         <Text style={styles.copy}>Capture the plates that keep you going.</Text>
 
@@ -212,9 +220,12 @@ export function CareScreen() {
               onPress={() => setMealKind(item.kind)}
               style={[styles.chip, mealKind === item.kind && styles.chipActiveWarm]}
             >
-              <Text style={[styles.chipText, mealKind === item.kind && styles.chipTextActive]}>
-                {item.emoji} {item.label}
-              </Text>
+              <View style={styles.chipLabel}>
+                <BloomIcon name={item.icon} size={18} />
+                <Text style={[styles.chipText, mealKind === item.kind && styles.chipTextActive]}>
+                  {item.label}
+                </Text>
+              </View>
             </Pressable>
           ))}
         </View>
@@ -229,7 +240,7 @@ export function CareScreen() {
           returnKeyType="done"
         />
         <Pressable style={styles.primaryBtn} onPress={onAddMeal}>
-          <Text style={styles.primaryText}>Save plate (+2 ⭐)</Text>
+          <Text style={styles.primaryText}>Save plate (+2 coins)</Text>
         </Pressable>
 
         <Text style={styles.subheading}>Today’s plates</Text>
@@ -240,7 +251,7 @@ export function CareScreen() {
             const meta = MEAL_KINDS.find((item) => item.kind === meal.kind);
             return (
               <View key={meal.id} style={styles.mealRow}>
-                <Text style={styles.mealEmoji}>{meta?.emoji}</Text>
+                <BloomIcon name={meta?.icon ?? 'nourish'} size={36} />
                 <View style={styles.mealBody}>
                   <Text style={styles.mealTitle}>{meal.title}</Text>
                   <Text style={styles.mealMeta}>{meta?.label}</Text>
@@ -318,6 +329,11 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: colors.textSoft,
   },
+  chipLabel: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
   chipTextActive: { color: colors.white },
   qualityRow: {
     flexDirection: 'row',
@@ -376,6 +392,12 @@ const styles = StyleSheet.create({
     color: colors.textSoft,
     marginTop: 10,
     textAlign: 'center',
+  },
+  hintRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
   },
   progressTrack: {
     height: 12,

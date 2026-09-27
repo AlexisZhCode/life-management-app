@@ -174,7 +174,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
             title: 'Task finished!',
             subtitle: 'You showed up for yourself.',
             coins: TASK_COINS,
-            emoji: '🌼',
+            emoji: 'bloom',
           });
           return {
             ...prev,
@@ -258,7 +258,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
         celebrate({
           title: 'Habit checked!',
-          subtitle: `${habit.emoji} ${habit.streak}-day streak`,
+          subtitle: `${habit.streak}-day streak`,
           coins: HABIT_COINS,
           emoji: habit.emoji,
         });
@@ -306,7 +306,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
             title: 'Mood saved',
             subtitle: 'Checking in is a win.',
             coins: MOOD_COINS,
-            emoji: '💛',
+            emoji: 'mood-good',
           });
         }
 
@@ -396,7 +396,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
             title: 'Sweet rest logged',
             subtitle: 'Your body will thank you.',
             coins: REST_COINS,
-            emoji: '😴',
+            emoji: 'rest-dreamy',
           });
         }
 
@@ -437,7 +437,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           title: 'Sip goal reached!',
           subtitle: 'Hydrated and glowing.',
           coins: SIP_GOAL_COINS,
-          emoji: '💧',
+          emoji: 'habit-sip',
         });
       } else {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(
@@ -491,7 +491,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         title: 'Nourish noted',
         subtitle: 'Fueling your day with care.',
         coins: MEAL_COINS,
-        emoji: '🍽️',
+        emoji: 'nourish',
       });
 
       update((prev) => ({

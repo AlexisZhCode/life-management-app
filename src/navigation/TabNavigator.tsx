@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { HomeScreen } from '../screens/HomeScreen';
 import { TasksScreen } from '../screens/TasksScreen';
@@ -7,15 +7,16 @@ import { CareScreen } from '../screens/CareScreen';
 import { HabitsScreen } from '../screens/HabitsScreen';
 import { MoodScreen } from '../screens/MoodScreen';
 import { RewardsScreen } from '../screens/RewardsScreen';
+import { BloomIcon, type BloomIconName } from '../icons/BloomIcon';
 import { colors } from '../theme/colors';
 import type { RootTabParamList } from './types';
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
 
-function TabIcon({ emoji, focused }: { emoji: string; focused: boolean }) {
+function TabIcon({ name, focused }: { name: BloomIconName; focused: boolean }) {
   return (
     <View style={[styles.iconWrap, focused && styles.iconFocused]}>
-      <Text style={styles.icon}>{emoji}</Text>
+      <BloomIcon name={name} size={26} />
     </View>
   );
 }
@@ -35,35 +36,35 @@ export function TabNavigator() {
         name="Home"
         component={HomeScreen}
         options={{
-          tabBarIcon: ({ focused }) => <TabIcon emoji="🏠" focused={focused} />,
+          tabBarIcon: ({ focused }) => <TabIcon name="home" focused={focused} />,
         }}
       />
       <Tab.Screen
         name="Tasks"
         component={TasksScreen}
         options={{
-          tabBarIcon: ({ focused }) => <TabIcon emoji="✅" focused={focused} />,
+          tabBarIcon: ({ focused }) => <TabIcon name="tasks" focused={focused} />,
         }}
       />
       <Tab.Screen
         name="Care"
         component={CareScreen}
         options={{
-          tabBarIcon: ({ focused }) => <TabIcon emoji="🫧" focused={focused} />,
+          tabBarIcon: ({ focused }) => <TabIcon name="care" focused={focused} />,
         }}
       />
       <Tab.Screen
         name="Habits"
         component={HabitsScreen}
         options={{
-          tabBarIcon: ({ focused }) => <TabIcon emoji="🌱" focused={focused} />,
+          tabBarIcon: ({ focused }) => <TabIcon name="habits" focused={focused} />,
         }}
       />
       <Tab.Screen
         name="Mood"
         component={MoodScreen}
         options={{
-          tabBarIcon: ({ focused }) => <TabIcon emoji="💛" focused={focused} />,
+          tabBarIcon: ({ focused }) => <TabIcon name="mood" focused={focused} />,
         }}
       />
       <Tab.Screen
@@ -71,7 +72,7 @@ export function TabNavigator() {
         component={RewardsScreen}
         options={{
           tabBarLabel: 'Treats',
-          tabBarIcon: ({ focused }) => <TabIcon emoji="🎁" focused={focused} />,
+          tabBarIcon: ({ focused }) => <TabIcon name="treats" focused={focused} />,
         }}
       />
     </Tab.Navigator>
@@ -84,7 +85,7 @@ const styles = StyleSheet.create({
     left: 10,
     right: 10,
     bottom: 16,
-    height: 70,
+    height: 74,
     borderRadius: 26,
     backgroundColor: colors.white,
     borderTopWidth: 0,
@@ -102,16 +103,13 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   iconWrap: {
-    width: 32,
-    height: 26,
+    width: 34,
+    height: 30,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 10,
   },
   iconFocused: {
     backgroundColor: colors.primarySoft,
-  },
-  icon: {
-    fontSize: 16,
   },
 });

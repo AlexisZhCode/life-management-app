@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { CoinBadge } from '../components/CoinBadge';
+import { BloomIcon, type BloomIconName } from '../icons/BloomIcon';
 import { Screen } from '../components/Screen';
 import { SoftCard } from '../components/SoftCard';
 import { useApp } from '../context/AppContext';
@@ -10,7 +11,14 @@ import { colors } from '../theme/colors';
 import { greetingForHour, todayKey } from '../utils/helpers';
 import type { RootTabParamList } from '../navigation/types';
 
-const moodEmoji = ['', '😢', '😕', '😐', '🙂', '😄'];
+const moodIcon: BloomIconName[] = [
+  'mood-ok',
+  'mood-low',
+  'mood-meh',
+  'mood-ok',
+  'mood-good',
+  'mood-great',
+];
 
 export function HomeScreen() {
   const { data, todayMood, todaySips, todayMeals, latestRest } = useApp();
@@ -45,7 +53,7 @@ export function HomeScreen() {
       }
     >
       <SoftCard style={styles.hero} tint={colors.primarySoft}>
-        <Text style={styles.heroEmoji}>🌸</Text>
+        <BloomIcon name="bloom" size={64} />
         <Text style={styles.heroTitle}>Your little garden</Text>
         <Text style={styles.heroCopy}>
           Finish tasks, tend your care rituals, and treat yourself kindly.
@@ -60,25 +68,25 @@ export function HomeScreen() {
       <Text style={styles.section}>Quick care</Text>
       <View style={styles.actions}>
         <QuickAction
-          emoji="✅"
+          icon="tasks"
           label="Tasks"
           onPress={() => navigation.navigate('Tasks')}
           tint={colors.mintSoft}
         />
         <QuickAction
-          emoji="🫧"
+          icon="care"
           label="Care"
           onPress={() => navigation.navigate('Care')}
           tint={colors.secondarySoft}
         />
         <QuickAction
-          emoji="💛"
+          icon="mood"
           label="Mood"
           onPress={() => navigation.navigate('Mood')}
           tint={colors.accentSoft}
         />
         <QuickAction
-          emoji="🎁"
+          icon="treats"
           label="Treats"
           onPress={() => navigation.navigate('Rewards')}
           tint={colors.lavenderSoft}
@@ -90,9 +98,14 @@ export function HomeScreen() {
         <Row
           label="Mood"
           value={
-            todayMood
-              ? `${moodEmoji[todayMood.value]} Logged`
-              : 'Not checked in yet'
+            todayMood ? (
+              <View style={styles.valueWithIcon}>
+                <BloomIcon name={moodIcon[todayMood.value]} size={20} />
+                <Text style={styles.rowValue}>Logged</Text>
+              </View>
+            ) : (
+              'Not checked in yet'
+            )
           }
         />
         <Row label="Little sips" value={`${sipGlasses}/${sipGoal} glasses`} />
@@ -150,19 +163,19 @@ function Stat({ label, value }: { label: string; value: string }) {
 }
 
 function QuickAction({
-  emoji,
+  icon,
   label,
   onPress,
   tint,
 }: {
-  emoji: string;
+  icon: BloomIconName;
   label: string;
   onPress: () => void;
   tint: string;
 }) {
   return (
     <Pressable style={[styles.action, { backgroundColor: tint }]} onPress={onPress}>
-      <Text style={styles.actionEmoji}>{emoji}</Text>
+      <BloomIcon name={icon} size={40} />
       <Text style={styles.actionLabel}>{label}</Text>
     </Pressable>
   );
@@ -174,20 +187,28 @@ function Row({
   last,
 }: {
   label: string;
-  value: string;
+  value: React.ReactNode;
   last?: boolean;
 }) {
   return (
     <View style={[styles.row, last && styles.lastRow]}>
       <Text style={styles.rowLabel}>{label}</Text>
-      <Text style={styles.rowValue}>{value}</Text>
+      {typeof value === 'string' ? (
+        <Text style={styles.rowValue}>{value}</Text>
+      ) : (
+        value
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   hero: { marginBottom: 8 },
-  heroEmoji: { fontSize: 36, marginBottom: 6 },
+  valueWithIcon: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
   heroTitle: {
     fontFamily: 'Nunito_800ExtraBold',
     fontSize: 22,
@@ -243,8 +264,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
   },
-  actionEmoji: { fontSize: 24, marginBottom: 6 },
   actionLabel: {
+    marginTop: 6,
     fontFamily: 'Nunito_800ExtraBold',
     fontSize: 15,
     color: colors.text,

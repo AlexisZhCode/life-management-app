@@ -24,7 +24,7 @@ export const defaultAppData = (): AppData => ({
     {
       id: 'habit-1',
       title: 'Morning stretch',
-      emoji: '🧘',
+      emoji: 'habit-yoga',
       streak: 0,
       completedDates: [],
       createdAt: new Date().toISOString(),
@@ -32,7 +32,7 @@ export const defaultAppData = (): AppData => ({
     {
       id: 'habit-2',
       title: 'Read 10 minutes',
-      emoji: '📖',
+      emoji: 'habit-read',
       streak: 0,
       completedDates: [],
       createdAt: new Date().toISOString(),

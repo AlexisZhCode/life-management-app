@@ -1,5 +1,6 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { BloomIcon } from '../icons/BloomIcon';
 import { colors, categoryColors } from '../theme/colors';
 import type { Task } from '../types';
 
@@ -28,7 +29,10 @@ export function TaskItem({ task, onToggle, onDelete }: Props) {
             <Text style={[styles.chipText, { color: colors.text }]}>{task.category}</Text>
           </View>
           {task.completed && task.coinsEarned ? (
-            <Text style={styles.coins}>+{task.coinsEarned} ⭐</Text>
+            <View style={styles.coins}>
+              <BloomIcon name="coin" size={14} />
+              <Text style={styles.coinsText}>+{task.coinsEarned}</Text>
+            </View>
           ) : null}
         </View>
       </View>
@@ -97,6 +101,11 @@ const styles = StyleSheet.create({
     textTransform: 'capitalize',
   },
   coins: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+  },
+  coinsText: {
     fontFamily: 'Nunito_700Bold',
     fontSize: 12,
     color: colors.primary,

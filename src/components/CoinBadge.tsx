@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { BloomIcon } from '../icons/BloomIcon';
 import { colors } from '../theme/colors';
 
 type Props = {
@@ -11,10 +12,12 @@ export function CoinBadge({ coins, streak }: Props) {
   return (
     <View style={styles.wrap}>
       <View style={styles.pill}>
-        <Text style={styles.text}>⭐ {coins}</Text>
+        <BloomIcon name="coin" size={16} />
+        <Text style={styles.text}>{coins}</Text>
       </View>
       <View style={[styles.pill, styles.streak]}>
-        <Text style={styles.text}>🔥 {streak}</Text>
+        <BloomIcon name="streak" size={16} />
+        <Text style={styles.text}>{streak}</Text>
       </View>
     </View>
   );
@@ -23,10 +26,13 @@ export function CoinBadge({ coins, streak }: Props) {
 const styles = StyleSheet.create({
   wrap: { flexDirection: 'row', gap: 8 },
   pill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
     backgroundColor: colors.accentSoft,
     borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 6,
     borderWidth: 1,
     borderColor: '#F5E3A1',
   },

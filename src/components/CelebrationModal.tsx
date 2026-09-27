@@ -7,6 +7,7 @@ import {
   Text,
   View,
 } from 'react-native';
+import { BloomIcon } from '../icons/BloomIcon';
 import { colors } from '../theme/colors';
 
 type Props = {
@@ -52,7 +53,7 @@ export function CelebrationModal({
     <Modal transparent visible={visible} animationType="fade" onRequestClose={onClose}>
       <View style={styles.overlay}>
         <Animated.View style={[styles.card, { opacity, transform: [{ scale }] }]}>
-          <Text style={styles.emoji}>{emoji}</Text>
+          <BloomIcon name={emoji} size={84} />
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.subtitle}>{subtitle}</Text>
           {coins > 0 ? (
@@ -85,7 +86,6 @@ const styles = StyleSheet.create({
     padding: 28,
     alignItems: 'center',
   },
-  emoji: { fontSize: 54, marginBottom: 10 },
   title: {
     fontFamily: 'Nunito_800ExtraBold',
     fontSize: 24,

@@ -3,17 +3,18 @@ import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { CoinBadge } from '../components/CoinBadge';
 import { Screen } from '../components/Screen';
 import { SoftCard } from '../components/SoftCard';
+import { BloomIcon, type BloomIconName } from '../icons/BloomIcon';
 import { useApp } from '../context/AppContext';
 import { colors } from '../theme/colors';
 import type { MoodValue } from '../types';
 import { formatFriendlyDate } from '../utils/helpers';
 
-const MOODS: { value: MoodValue; emoji: string; label: string }[] = [
-  { value: 1, emoji: '😢', label: 'Low' },
-  { value: 2, emoji: '😕', label: 'Meh' },
-  { value: 3, emoji: '😐', label: 'Okay' },
-  { value: 4, emoji: '🙂', label: 'Good' },
-  { value: 5, emoji: '😄', label: 'Great' },
+const MOODS: { value: MoodValue; icon: BloomIconName; label: string }[] = [
+  { value: 1, icon: 'mood-low', label: 'Low' },
+  { value: 2, icon: 'mood-meh', label: 'Meh' },
+  { value: 3, icon: 'mood-ok', label: 'Okay' },
+  { value: 4, icon: 'mood-good', label: 'Good' },
+  { value: 5, icon: 'mood-great', label: 'Great' },
 ];
 
 export function MoodScreen() {
@@ -38,7 +39,7 @@ export function MoodScreen() {
               onPress={() => setValue(mood.value)}
               style={[styles.moodBtn, value === mood.value && styles.moodActive]}
             >
-              <Text style={styles.moodEmoji}>{mood.emoji}</Text>
+              <BloomIcon name={mood.icon} size={36} />
               <Text style={styles.moodLabel}>{mood.label}</Text>
             </Pressable>
           ))}
@@ -56,7 +57,7 @@ export function MoodScreen() {
           onPress={() => logMood(value, note)}
         >
           <Text style={styles.saveText}>
-            {todayMood ? 'Update mood' : 'Save mood (+2 ⭐)'}
+            {todayMood ? 'Update mood' : 'Save mood (+2 coins)'}
           </Text>
         </Pressable>
       </SoftCard>
@@ -71,7 +72,7 @@ export function MoodScreen() {
           const mood = MOODS.find((m) => m.value === entry.value);
           return (
             <SoftCard key={entry.id} style={styles.entry}>
-              <Text style={styles.entryEmoji}>{mood?.emoji}</Text>
+              <BloomIcon name={mood?.icon ?? 'mood-ok'} size={40} />
               <View style={styles.entryBody}>
                 <Text style={styles.entryTitle}>
                   {mood?.label} · {formatFriendlyDate(entry.date)}
@@ -114,7 +115,6 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: colors.primary,
   },
-  moodEmoji: { fontSize: 24 },
   moodLabel: {
     fontFamily: 'Nunito_700Bold',
     fontSize: 11,
@@ -164,7 +164,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingVertical: 14,
   },
-  entryEmoji: { fontSize: 28 },
   entryBody: { flex: 1 },
   entryTitle: {
     fontFamily: 'Nunito_800ExtraBold',

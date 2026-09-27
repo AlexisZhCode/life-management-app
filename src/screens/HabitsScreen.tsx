@@ -11,16 +11,26 @@ import { CoinBadge } from '../components/CoinBadge';
 import { EmptyState } from '../components/EmptyState';
 import { Screen } from '../components/Screen';
 import { SoftCard } from '../components/SoftCard';
+import { BloomIcon, type BloomIconName } from '../icons/BloomIcon';
 import { useApp } from '../context/AppContext';
 import { colors } from '../theme/colors';
 import { todayKey } from '../utils/helpers';
 
-const EMOJIS = ['🌱', '💧', '📖', '🏃', '🧘', '🛏️', '🧹', '🎵'];
+const HABIT_ICONS: BloomIconName[] = [
+  'habit-stretch',
+  'habit-sip',
+  'habit-read',
+  'habit-run',
+  'habit-yoga',
+  'habit-sleep',
+  'habit-tidy',
+  'habit-music',
+];
 
 export function HabitsScreen() {
   const { data, addHabit, completeHabit, deleteHabit } = useApp();
   const [title, setTitle] = useState('');
-  const [emoji, setEmoji] = useState('🌱');
+  const [icon, setIcon] = useState<BloomIconName>('habit-stretch');
   const today = todayKey();
 
   const onAdd = () => {
@@ -28,7 +38,7 @@ export function HabitsScreen() {
       Alert.alert('Name your habit', 'Keep it small and friendly.');
       return;
     }
-    addHabit(title, emoji);
+    addHabit(title, icon);
     setTitle('');
   };
 
@@ -50,13 +60,13 @@ export function HabitsScreen() {
           onSubmitEditing={onAdd}
         />
         <View style={styles.emojis}>
-          {EMOJIS.map((item) => (
+          {HABIT_ICONS.map((item) => (
             <Pressable
               key={item}
-              onPress={() => setEmoji(item)}
-              style={[styles.emojiBtn, emoji === item && styles.emojiActive]}
+              onPress={() => setIcon(item)}
+              style={[styles.emojiBtn, icon === item && styles.emojiActive]}
             >
-              <Text style={styles.emoji}>{item}</Text>
+              <BloomIcon name={item} size={28} />
             </Pressable>
           ))}
         </View>
@@ -67,7 +77,7 @@ export function HabitsScreen() {
 
       {data.habits.length === 0 ? (
         <EmptyState
-          emoji="🪴"
+          icon="empty-habits"
           title="No habits yet"
           message="Start with one tiny ritual you can keep."
         />
@@ -81,12 +91,15 @@ export function HabitsScreen() {
               tint={done ? colors.mintSoft : colors.surface}
             >
               <View style={styles.habitTop}>
-                <Text style={styles.habitEmoji}>{habit.emoji}</Text>
+                <BloomIcon name={habit.emoji} size={44} />
                 <View style={styles.habitBody}>
                   <Text style={styles.habitTitle}>{habit.title}</Text>
-                  <Text style={styles.habitMeta}>
-                    🔥 {habit.streak} day streak
-                  </Text>
+                  <View style={styles.habitMeta}>
+                    <BloomIcon name="streak" size={16} />
+                    <Text style={styles.habitMetaText}>
+                      {habit.streak} day streak
+                    </Text>
+                  </View>
                 </View>
                 <Pressable
                   onPress={() =>
@@ -109,7 +122,7 @@ export function HabitsScreen() {
                 disabled={done}
               >
                 <Text style={[styles.checkText, done && styles.checkTextDone]}>
-                  {done ? 'Done for today ✨' : 'Mark done (+3 ⭐)'}
+                  {done ? 'Done for today' : 'Mark done (+3 coins)'}
                 </Text>
               </Pressable>
             </SoftCard>
@@ -153,7 +166,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.secondarySoft,
     borderColor: colors.secondary,
   },
-  emoji: { fontSize: 20 },
   addBtn: {
     marginTop: 14,
     backgroundColor: colors.secondary,
@@ -168,7 +180,6 @@ const styles = StyleSheet.create({
   },
   habit: { marginBottom: 12 },
   habitTop: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  habitEmoji: { fontSize: 28 },
   habitBody: { flex: 1 },
   habitTitle: {
     fontFamily: 'Nunito_800ExtraBold',
@@ -176,10 +187,15 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
   habitMeta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginTop: 2,
+  },
+  habitMetaText: {
     fontFamily: 'Nunito_600SemiBold',
     fontSize: 13,
     color: colors.textSoft,
-    marginTop: 2,
   },
   delete: { color: colors.textMuted, fontSize: 16, padding: 4 },
   checkBtn: {

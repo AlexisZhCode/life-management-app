@@ -4,6 +4,7 @@ import { CoinBadge } from '../components/CoinBadge';
 import { EmptyState } from '../components/EmptyState';
 import { Screen } from '../components/Screen';
 import { SoftCard } from '../components/SoftCard';
+import { BloomIcon } from '../icons/BloomIcon';
 import { useApp } from '../context/AppContext';
 import { colors } from '../theme/colors';
 import { formatFriendlyDate } from '../utils/helpers';
@@ -40,7 +41,7 @@ export function RewardsScreen() {
       }
     >
       <SoftCard tint={colors.lavenderSoft} style={styles.banner}>
-        <Text style={styles.bannerEmoji}>🎁</Text>
+        <BloomIcon name="treats" size={48} />
         <Text style={styles.bannerTitle}>Your treat shop</Text>
         <Text style={styles.bannerCopy}>
           Earn coins by finishing tasks (+5), habits (+3), and mood check-ins (+2).
@@ -53,7 +54,7 @@ export function RewardsScreen() {
         return (
           <SoftCard key={reward.id} style={styles.card}>
             <View style={styles.row}>
-              <Text style={styles.emoji}>{reward.emoji}</Text>
+              <BloomIcon name={reward.emoji} size={48} />
               <View style={styles.body}>
                 <Text style={styles.title}>{reward.title}</Text>
                 <Text style={styles.desc}>{reward.description}</Text>
@@ -75,14 +76,14 @@ export function RewardsScreen() {
       <Text style={styles.section}>Recently redeemed</Text>
       {data.redeemed.length === 0 ? (
         <EmptyState
-          emoji="✨"
+          icon="empty-treats"
           title="No treats yet"
           message="Redeem something cozy when you've earned enough coins."
         />
       ) : (
         data.redeemed.slice(0, 6).map((item) => (
           <SoftCard key={item.id} style={styles.history}>
-            <Text style={styles.emoji}>{item.emoji}</Text>
+            <BloomIcon name={item.emoji} size={40} />
             <View style={styles.body}>
               <Text style={styles.title}>{item.title}</Text>
               <Text style={styles.desc}>

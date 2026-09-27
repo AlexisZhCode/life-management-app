@@ -34,7 +34,7 @@ function Root() {
         visible={Boolean(celebration)}
         title={celebration?.title ?? ''}
         subtitle={celebration?.subtitle ?? ''}
-        emoji={celebration?.emoji ?? '🌼'}
+        emoji={celebration?.emoji ?? 'bloom'}
         coins={celebration?.coins ?? 0}
         onClose={dismissCelebration}
       />
