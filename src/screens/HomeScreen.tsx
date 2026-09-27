@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { CoinBadge } from '../components/CoinBadge';
@@ -46,15 +46,15 @@ export function HomeScreen() {
 
   return (
     <Screen
-      title="Bloom"
+      title="Lifekit"
       subtitle={`${greetingForHour()} — let's make today gentle.`}
       headerRight={
         <CoinBadge coins={data.stats.coins} streak={data.stats.currentStreak} />
       }
     >
       <SoftCard style={styles.hero} tint={colors.primarySoft}>
-        <BloomIcon name="bloom" size={64} />
-        <Text style={styles.heroTitle}>Your little garden</Text>
+        <Image source={require('../../assets/icon.png')} style={styles.logo} />
+        <Text style={styles.heroTitle}>Your everyday kit</Text>
         <Text style={styles.heroCopy}>
           Finish tasks, tend your care rituals, and treat yourself kindly.
         </Text>
@@ -204,6 +204,12 @@ function Row({
 
 const styles = StyleSheet.create({
   hero: { marginBottom: 8 },
+  logo: {
+    width: 72,
+    height: 72,
+    borderRadius: 18,
+    marginBottom: 8,
+  },
   valueWithIcon: {
     flexDirection: 'row',
     alignItems: 'center',

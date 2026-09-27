@@ -62,7 +62,7 @@ export function CelebrationModal({
             </View>
           ) : null}
           <Pressable style={styles.button} onPress={onClose}>
-            <Text style={styles.buttonText}>Keep blooming</Text>
+            <Text style={styles.buttonText}>Keep going</Text>
           </Pressable>
         </Animated.View>
       </View>

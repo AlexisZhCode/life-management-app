@@ -65,7 +65,7 @@ export function MoodScreen() {
       <Text style={styles.section}>Recent check-ins</Text>
       {data.moods.length === 0 ? (
         <SoftCard>
-          <Text style={styles.empty}>Your first mood will bloom here.</Text>
+          <Text style={styles.empty}>Your first mood will show up here.</Text>
         </SoftCard>
       ) : (
         data.moods.slice(0, 8).map((entry) => {
