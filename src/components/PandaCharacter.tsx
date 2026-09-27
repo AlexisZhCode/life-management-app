@@ -10,9 +10,10 @@ const HANDLE = '#8B5E3C';
 
 type Props = {
   size?: number;
+  hold?: 'kit' | 'bamboo';
 };
 
-export function PandaCharacter({ size = 120 }: Props) {
+export function PandaCharacter({ size = 120, hold = 'kit' }: Props) {
   const [bob] = useState(() => new Animated.Value(0));
   const [wave] = useState(() => new Animated.Value(0));
   const [armAngle, setArmAngle] = useState(8);
@@ -82,22 +83,18 @@ export function PandaCharacter({ size = 120 }: Props) {
   return (
     <View style={{ width: size, height: size }}>
       <Svg width={size} height={size} viewBox="0 0 140 140" style={StyleSheet.absoluteFill}>
-        <Ellipse cx={78} cy={128} rx={36} ry={6} fill="#E7D3C6" opacity={0.55} />
+        <Ellipse
+          cx={78}
+          cy={128}
+          rx={36}
+          ry={6}
+          fill={hold === 'bamboo' ? '#1C8F7A' : '#E7D3C6'}
+          opacity={0.45}
+        />
       </Svg>
       <Animated.View style={{ width: size, height: size, transform: [{ translateY }] }}>
         <Svg width={size} height={size} viewBox="0 0 140 140">
-          <Rect x={8} y={88} width={32} height={28} rx={7} fill={CASE} />
-          <Rect
-            x={14}
-            y={80}
-            width={18}
-            height={12}
-            rx={6}
-            fill="none"
-            stroke={HANDLE}
-            strokeWidth={3}
-          />
-          <Rect x={20} y={98} width={7} height={8} rx={2} fill="#F4FFFC" />
+          {hold === 'bamboo' ? <BambooShoot /> : <KitCase />}
 
           <Circle cx={52} cy={40} r={13} fill={INK} />
           <Circle cx={104} cy={38} r={13} fill={INK} />
@@ -131,5 +128,36 @@ export function PandaCharacter({ size = 120 }: Props) {
         </Svg>
       </Animated.View>
     </View>
+  );
+}
+
+function KitCase() {
+  return (
+    <>
+      <Rect x={8} y={88} width={32} height={28} rx={7} fill={CASE} />
+      <Rect
+        x={14}
+        y={80}
+        width={18}
+        height={12}
+        rx={6}
+        fill="none"
+        stroke={HANDLE}
+        strokeWidth={3}
+      />
+      <Rect x={20} y={98} width={7} height={8} rx={2} fill="#F4FFFC" />
+    </>
+  );
+}
+
+function BambooShoot() {
+  return (
+    <>
+      <Path d="M24 120 V74" stroke="#6AAA45" strokeWidth={8} strokeLinecap="round" />
+      <Path d="M18 98 H30" stroke="#D5EE9A" strokeWidth={3} strokeLinecap="round" />
+      <Path d="M18 86 H30" stroke="#D5EE9A" strokeWidth={3} strokeLinecap="round" />
+      <Path d="M22 78 C8 66 6 52 16 46 C10 62 16 74 22 78 Z" fill="#7ED36A" />
+      <Path d="M26 72 C40 60 44 46 34 42 C40 56 34 70 26 72 Z" fill="#9ED9B0" />
+    </>
   );
 }

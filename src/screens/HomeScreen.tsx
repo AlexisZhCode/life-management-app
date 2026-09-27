@@ -1,313 +1,359 @@
-import React, { useMemo } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import React, { useMemo, useState } from 'react';
+import {
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Svg, { Path } from 'react-native-svg';
+import { BambooGrove } from '../components/BambooGrove';
+import { BloomIcon } from '../icons/BloomIcon';
 import { CoinBadge } from '../components/CoinBadge';
-import { PandaCharacter } from '../components/PandaCharacter';
-import { BloomIcon, type BloomIconName } from '../icons/BloomIcon';
-import { Screen } from '../components/Screen';
-import { SoftCard } from '../components/SoftCard';
 import { useApp } from '../context/AppContext';
-import { colors } from '../theme/colors';
-import { greetingForHour, todayKey } from '../utils/helpers';
+import { colors, categoryColors } from '../theme/colors';
+import { todayKey } from '../utils/helpers';
+import { HABIT_COINS, TASK_COINS } from '../utils/rewards';
 import type { RootTabParamList } from '../navigation/types';
+import type { Habit, Task } from '../types';
 
-const moodIcon: BloomIconName[] = [
-  'mood-ok',
-  'mood-low',
-  'mood-meh',
-  'mood-ok',
-  'mood-good',
-  'mood-great',
-];
+type Goal =
+  | { kind: 'task'; id: string; title: string; done: boolean; task: Task }
+  | { kind: 'habit'; id: string; title: string; done: boolean; habit: Habit };
 
 export function HomeScreen() {
-  const { data, todayMood, todaySips, todayMeals, latestRest } = useApp();
+  const { width } = useWindowDimensions();
   const navigation = useNavigation<BottomTabNavigationProp<RootTabParamList>>();
+  const { data, toggleTask, completeHabit } = useApp();
   const today = todayKey();
+  const [showDone, setShowDone] = useState(true);
 
-  const openTasks = useMemo(
-    () => data.tasks.filter((t) => !t.completed),
-    [data.tasks],
-  );
-  const doneToday = useMemo(
-    () =>
-      data.tasks.filter(
-        (t) => t.completed && t.completedAt?.startsWith(today),
-      ).length,
-    [data.tasks, today],
-  );
-  const habitsDone = useMemo(
-    () => data.habits.filter((h) => h.completedDates.includes(today)).length,
-    [data.habits, today],
-  );
+  const goals = useMemo(() => {
+    const tasks: Goal[] = data.tasks
+      .filter((task) => !task.completed || task.completedAt?.startsWith(today))
+      .map((task) => ({
+        kind: 'task',
+        id: task.id,
+        title: task.title,
+        done: task.completed,
+        task,
+      }));
+    const habits: Goal[] = data.habits.map((habit) => ({
+      kind: 'habit',
+      id: habit.id,
+      title: habit.title,
+      done: habit.completedDates.includes(today),
+      habit,
+    }));
+    return [...tasks, ...habits].sort((a, b) => Number(a.done) - Number(b.done));
+  }, [data.habits, data.tasks, today]);
 
-  const sipGlasses = todaySips?.glasses ?? 0;
-  const sipGoal = todaySips?.goal ?? 8;
+  const done = goals.filter((goal) => goal.done).length;
+  const left = goals.length - done;
+  const progress = goals.length === 0 ? 0 : done / goals.length;
+  const visible = showDone ? goals : goals.filter((goal) => !goal.done);
 
   return (
-    <Screen
-      title="LifeKit"
-      subtitle={`${greetingForHour()} — let's make today gentle.`}
-      headerRight={
-        <CoinBadge coins={data.stats.coins} streak={data.stats.currentStreak} />
-      }
-    >
-      <SoftCard style={styles.hero} tint={colors.primarySoft}>
-        <View style={styles.heroRow}>
-          <PandaCharacter size={112} />
-          <View style={styles.heroCopyWrap}>
-            <Text style={styles.heroTitle}>Your everyday kit</Text>
-            <Text style={styles.heroCopy}>
-              Finish tasks, tend your care rituals, and treat yourself kindly.
-            </Text>
+    <View style={styles.screen}>
+      <SafeAreaView style={styles.flex} edges={['top']}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scroll}
+        >
+          <View>
+            <BambooGrove width={width} />
+            <View style={styles.badge}>
+              <CoinBadge coins={data.stats.coins} streak={data.stats.currentStreak} />
+            </View>
           </View>
-        </View>
-        <View style={styles.statsRow}>
-          <Stat label="Open tasks" value={String(openTasks.length)} />
-          <Stat label="Done today" value={String(doneToday)} />
-          <Stat label="Habits" value={`${habitsDone}/${data.habits.length}`} />
-        </View>
-      </SoftCard>
 
-      <Text style={styles.section}>Quick care</Text>
-      <View style={styles.actions}>
-        <QuickAction
-          icon="tasks"
-          label="Tasks"
-          onPress={() => navigation.navigate('Tasks')}
-          tint={colors.mintSoft}
-        />
-        <QuickAction
-          icon="care"
-          label="Care"
-          onPress={() => navigation.navigate('Care')}
-          tint={colors.secondarySoft}
-        />
-        <QuickAction
-          icon="mood"
-          label="Mood"
-          onPress={() => navigation.navigate('Mood')}
-          tint={colors.accentSoft}
-        />
-        <QuickAction
-          icon="treats"
-          label="Treats"
-          onPress={() => navigation.navigate('Rewards')}
-          tint={colors.lavenderSoft}
-        />
-      </View>
+          <View style={styles.sheet}>
+            <View style={styles.progressCard}>
+              <View style={styles.progressTop}>
+                <View style={styles.leafBadge}>
+                  <Svg width={22} height={22} viewBox="0 0 22 22">
+                    <Path d="M11 20 V7" stroke="#6AAA45" strokeWidth={3} strokeLinecap="round" />
+                    <Path d="M11 12 C6 10 4 6 6 3 C8 7 11 9 11 12 Z" fill="#7ED36A" />
+                    <Path d="M11 9 C16 7 18 4 16 2 C14 5 11 7 11 9 Z" fill="#9ED9B0" />
+                  </Svg>
+                </View>
+                <View style={styles.progressCopy}>
+                  <Text style={styles.progressTitle}>Today in the grove</Text>
+                  <View style={styles.track}>
+                    <View
+                      style={[
+                        styles.fill,
+                        { width: `${Math.max(progress * 100, goals.length ? 8 : 0)}%` },
+                      ]}
+                    />
+                  </View>
+                </View>
+                <Text style={styles.progressCount}>
+                  {done} / {goals.length}
+                </Text>
+              </View>
+            </View>
 
-      <Text style={styles.section}>Today’s peek</Text>
-      <SoftCard>
-        <Row
-          label="Mood"
-          value={
-            todayMood ? (
-              <View style={styles.valueWithIcon}>
-                <BloomIcon name={moodIcon[todayMood.value]} size={20} />
-                <Text style={styles.rowValue}>Logged</Text>
+            <View style={styles.leftRow}>
+              <Text style={styles.leftCopy}>
+                {left === 0
+                  ? 'All of today’s goals are done!'
+                  : `${left} goal${left === 1 ? '' : 's'} left for today!`}
+              </Text>
+              <Pressable
+                onPress={() => navigation.navigate('Tasks')}
+                style={styles.addBtn}
+                accessibilityRole="button"
+                accessibilityLabel="Add a goal"
+              >
+                <Text style={styles.addLabel}>+</Text>
+              </Pressable>
+            </View>
+
+            <Pressable onPress={() => setShowDone((open) => !open)}>
+              <Text style={styles.section}>
+                {showDone ? 'Today  ▾' : 'Still to do  ▾'}
+              </Text>
+            </Pressable>
+
+            {visible.length === 0 ? (
+              <View style={styles.empty}>
+                <Text style={styles.emptyTitle}>The grove is quiet</Text>
+                <Text style={styles.emptyCopy}>Add a task or a habit to start the day.</Text>
               </View>
             ) : (
-              'Not checked in yet'
-            )
-          }
-        />
-        <Row label="Little sips" value={`${sipGlasses}/${sipGoal} glasses`} />
-        <Row
-          label="Nourish"
-          value={
-            todayMeals.length
-              ? `${todayMeals.length} plate${todayMeals.length === 1 ? '' : 's'}`
-              : 'No plates yet'
-          }
-        />
-        <Row
-          label="Sweet rest"
-          value={
-            latestRest?.date === today
-              ? 'Logged for today'
-              : latestRest
-                ? 'Log last night'
-                : 'Set your rhythm'
-          }
-        />
-        <Row
-          label="Streak"
-          value={`${data.stats.currentStreak} day${data.stats.currentStreak === 1 ? '' : 's'}`}
-          last
-        />
-      </SoftCard>
-
-      {openTasks.length > 0 ? (
-        <>
-          <Text style={styles.section}>Up next</Text>
-          <SoftCard>
-            {openTasks.slice(0, 3).map((task, index) => (
-              <Text
-                key={task.id}
-                style={[styles.nextItem, index === Math.min(2, openTasks.length - 1) && styles.lastItem]}
-              >
-                • {task.title}
-              </Text>
-            ))}
-          </SoftCard>
-        </>
-      ) : null}
-    </Screen>
-  );
-}
-
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <View style={styles.stat}>
-      <Text style={styles.statValue}>{value}</Text>
-      <Text style={styles.statLabel}>{label}</Text>
+              visible.map((goal) => (
+                <GoalCard
+                  key={`${goal.kind}-${goal.id}`}
+                  goal={goal}
+                  onCheck={() => {
+                    if (goal.kind === 'task') {
+                      toggleTask(goal.id);
+                      return;
+                    }
+                    if (!goal.done) completeHabit(goal.id);
+                  }}
+                />
+              ))
+            )}
+          </View>
+        </ScrollView>
+      </SafeAreaView>
     </View>
   );
 }
 
-function QuickAction({
-  icon,
-  label,
-  onPress,
-  tint,
-}: {
-  icon: BloomIconName;
-  label: string;
-  onPress: () => void;
-  tint: string;
-}) {
+function GoalCard({ goal, onCheck }: { goal: Goal; onCheck: () => void }) {
+  const coins = goal.kind === 'task' ? TASK_COINS : HABIT_COINS;
+  const tint = goal.kind === 'task' ? categoryColors[goal.task.category] : colors.mint;
+
   return (
-    <Pressable style={[styles.action, { backgroundColor: tint }]} onPress={onPress}>
-      <BloomIcon name={icon} size={40} />
-      <Text style={styles.actionLabel}>{label}</Text>
-    </Pressable>
+    <View style={[styles.card, goal.done && styles.cardDone]}>
+      <View style={[styles.goalIcon, { backgroundColor: tint }]}>
+        {goal.kind === 'habit' ? (
+          <BloomIcon name={goal.habit.emoji} size={28} />
+        ) : (
+          <BloomIcon
+            name={
+              goal.task.category === 'health'
+                ? 'habit-sip'
+                : goal.task.category === 'home'
+                  ? 'habits'
+                  : goal.task.category === 'work'
+                    ? 'tasks'
+                    : goal.task.category === 'social'
+                      ? 'mood-great'
+                      : 'mood-good'
+            }
+            size={28}
+          />
+        )}
+      </View>
+      <Text style={[styles.goalTitle, goal.done && styles.goalTitleDone]} numberOfLines={2}>
+        {goal.title}
+      </Text>
+      <Text style={styles.coins}>{coins}</Text>
+      <View style={styles.coinDot} />
+      <Pressable
+        onPress={onCheck}
+        style={[styles.check, goal.done && styles.checkDone]}
+        accessibilityRole="button"
+        accessibilityLabel={goal.done ? `${goal.title} done` : `Finish ${goal.title}`}
+      >
+        {goal.done ? <Check /> : null}
+      </Pressable>
+    </View>
   );
 }
 
-function Row({
-  label,
-  value,
-  last,
-}: {
-  label: string;
-  value: React.ReactNode;
-  last?: boolean;
-}) {
+function Check() {
   return (
-    <View style={[styles.row, last && styles.lastRow]}>
-      <Text style={styles.rowLabel}>{label}</Text>
-      {typeof value === 'string' ? (
-        <Text style={styles.rowValue}>{value}</Text>
-      ) : (
-        value
-      )}
-    </View>
+    <Svg width={16} height={16} viewBox="0 0 16 16">
+      <Path
+        d="M3 8.2 L6.4 11.6 L13 4.4"
+        stroke="#FFFFFF"
+        strokeWidth={2.2}
+        fill="none"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </Svg>
   );
 }
 
 const styles = StyleSheet.create({
-  hero: { marginBottom: 8 },
-  heroRow: {
-    flexDirection: 'row',
+  screen: { flex: 1, backgroundColor: '#249E8C' },
+  flex: { flex: 1 },
+  scroll: { paddingBottom: 120 },
+  badge: { position: 'absolute', top: 8, right: 16 },
+  sheet: {
+    marginTop: -28,
+    backgroundColor: '#249E8C',
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    minHeight: 420,
+  },
+  progressCard: {
+    backgroundColor: colors.white,
+    borderRadius: 22,
+    padding: 14,
+  },
+  progressTop: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  leafBadge: {
+    width: 36,
+    height: 36,
+    borderRadius: 12,
+    backgroundColor: '#FFF3C4',
     alignItems: 'center',
-    gap: 4,
+    justifyContent: 'center',
   },
-  heroCopyWrap: {
-    flex: 1,
-  },
-  valueWithIcon: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  heroTitle: {
+  progressCopy: { flex: 1 },
+  progressTitle: {
     fontFamily: 'Nunito_800ExtraBold',
-    fontSize: 22,
+    fontSize: 16,
     color: colors.text,
+    marginBottom: 8,
   },
-  heroCopy: {
-    fontFamily: 'Nunito_500Medium',
+  track: {
+    height: 12,
+    borderRadius: 999,
+    backgroundColor: '#F3E6D0',
+    overflow: 'hidden',
+  },
+  fill: {
+    height: 12,
+    borderRadius: 999,
+    backgroundColor: '#F0A23A',
+  },
+  progressCount: {
+    fontFamily: 'Nunito_800ExtraBold',
     fontSize: 14,
-    color: colors.textSoft,
-    marginTop: 6,
-    lineHeight: 20,
+    color: '#C9844A',
   },
-  statsRow: {
+  leftRow: {
     flexDirection: 'row',
-    marginTop: 16,
-    gap: 8,
-  },
-  stat: {
-    flex: 1,
-    backgroundColor: 'rgba(255,255,255,0.7)',
-    borderRadius: 16,
-    padding: 12,
     alignItems: 'center',
-  },
-  statValue: {
-    fontFamily: 'Nunito_800ExtraBold',
-    fontSize: 18,
-    color: colors.text,
-  },
-  statLabel: {
-    fontFamily: 'Nunito_600SemiBold',
-    fontSize: 11,
-    color: colors.textSoft,
-    marginTop: 2,
-  },
-  section: {
-    fontFamily: 'Nunito_800ExtraBold',
-    fontSize: 18,
-    color: colors.text,
-    marginTop: 22,
-    marginBottom: 10,
-  },
-  actions: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    marginTop: 16,
     gap: 10,
   },
-  action: {
-    width: '47%',
-    borderRadius: 20,
-    paddingVertical: 16,
-    paddingHorizontal: 14,
-    borderWidth: 1,
-    borderColor: colors.border,
+  leftCopy: {
+    flex: 1,
+    fontFamily: 'Nunito_800ExtraBold',
+    fontSize: 16,
+    color: colors.white,
   },
-  actionLabel: {
-    marginTop: 6,
+  addBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    backgroundColor: 'rgba(255,255,255,0.22)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  addLabel: {
+    color: colors.white,
+    fontFamily: 'Nunito_800ExtraBold',
+    fontSize: 22,
+    lineHeight: 26,
+  },
+  section: {
+    marginTop: 18,
+    marginBottom: 10,
+    fontFamily: 'Nunito_800ExtraBold',
+    fontSize: 16,
+    color: 'rgba(255,255,255,0.92)',
+  },
+  card: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.white,
+    borderRadius: 22,
+    paddingVertical: 12,
+    paddingHorizontal: 12,
+    marginBottom: 10,
+    gap: 10,
+  },
+  cardDone: { opacity: 0.72 },
+  goalIcon: {
+    width: 46,
+    height: 46,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  goalTitle: {
+    flex: 1,
+    fontFamily: 'Nunito_800ExtraBold',
+    fontSize: 16,
+    color: colors.text,
+  },
+  goalTitleDone: { textDecorationLine: 'line-through' },
+  coins: {
     fontFamily: 'Nunito_800ExtraBold',
     fontSize: 15,
-    color: colors.text,
+    color: '#C9844A',
   },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+  coinDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#F0A23A',
+    marginRight: 2,
   },
-  lastRow: { borderBottomWidth: 0, paddingBottom: 0 },
-  rowLabel: {
+  check: {
+    width: 36,
+    height: 36,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: '#E7D8CC',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.white,
+  },
+  checkDone: {
+    backgroundColor: '#6BCB8A',
+    borderColor: '#6BCB8A',
+  },
+  empty: {
+    backgroundColor: 'rgba(255,255,255,0.16)',
+    borderRadius: 18,
+    padding: 16,
+  },
+  emptyTitle: {
+    fontFamily: 'Nunito_800ExtraBold',
+    fontSize: 16,
+    color: colors.white,
+  },
+  emptyCopy: {
+    marginTop: 4,
     fontFamily: 'Nunito_600SemiBold',
-    color: colors.textSoft,
     fontSize: 14,
+    color: 'rgba(255,255,255,0.88)',
   },
-  rowValue: {
-    fontFamily: 'Nunito_700Bold',
-    color: colors.text,
-    fontSize: 14,
-  },
-  nextItem: {
-    fontFamily: 'Nunito_600SemiBold',
-    color: colors.text,
-    fontSize: 15,
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  lastItem: { borderBottomWidth: 0, paddingBottom: 0 },
 });
