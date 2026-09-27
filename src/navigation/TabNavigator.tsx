@@ -7,16 +7,16 @@ import { CareScreen } from '../screens/CareScreen';
 import { HabitsScreen } from '../screens/HabitsScreen';
 import { MoodScreen } from '../screens/MoodScreen';
 import { RewardsScreen } from '../screens/RewardsScreen';
-import { BloomIcon, type BloomIconName } from '../icons/BloomIcon';
+import { TabGlyph, type TabGlyphName } from '../icons/TabGlyph';
 import { colors } from '../theme/colors';
 import type { RootTabParamList } from './types';
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
 
-function TabIcon({ name, focused }: { name: BloomIconName; focused: boolean }) {
+function TabIcon({ name, focused }: { name: TabGlyphName; focused: boolean }) {
   return (
     <View style={[styles.iconWrap, focused && styles.iconFocused]}>
-      <BloomIcon name={name} size={26} />
+      <TabGlyph name={name} size={26} />
     </View>
   );
 }
@@ -103,13 +103,13 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   iconWrap: {
-    width: 34,
-    height: 30,
+    width: 38,
+    height: 32,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 10,
+    borderRadius: 12,
   },
   iconFocused: {
-    backgroundColor: colors.primarySoft,
+    backgroundColor: '#F3E6D8',
   },
 });

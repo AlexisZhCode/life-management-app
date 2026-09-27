@@ -1,8 +1,9 @@
 import React, { useMemo } from 'react';
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { CoinBadge } from '../components/CoinBadge';
+import { PandaCharacter } from '../components/PandaCharacter';
 import { BloomIcon, type BloomIconName } from '../icons/BloomIcon';
 import { Screen } from '../components/Screen';
 import { SoftCard } from '../components/SoftCard';
@@ -46,18 +47,22 @@ export function HomeScreen() {
 
   return (
     <Screen
-      title="Lifekit"
+      title="LifeKit"
       subtitle={`${greetingForHour()} — let's make today gentle.`}
       headerRight={
         <CoinBadge coins={data.stats.coins} streak={data.stats.currentStreak} />
       }
     >
       <SoftCard style={styles.hero} tint={colors.primarySoft}>
-        <Image source={require('../../assets/icon.png')} style={styles.logo} />
-        <Text style={styles.heroTitle}>Your everyday kit</Text>
-        <Text style={styles.heroCopy}>
-          Finish tasks, tend your care rituals, and treat yourself kindly.
-        </Text>
+        <View style={styles.heroRow}>
+          <PandaCharacter size={112} />
+          <View style={styles.heroCopyWrap}>
+            <Text style={styles.heroTitle}>Your everyday kit</Text>
+            <Text style={styles.heroCopy}>
+              Finish tasks, tend your care rituals, and treat yourself kindly.
+            </Text>
+          </View>
+        </View>
         <View style={styles.statsRow}>
           <Stat label="Open tasks" value={String(openTasks.length)} />
           <Stat label="Done today" value={String(doneToday)} />
@@ -204,11 +209,13 @@ function Row({
 
 const styles = StyleSheet.create({
   hero: { marginBottom: 8 },
-  logo: {
-    width: 72,
-    height: 72,
-    borderRadius: 18,
-    marginBottom: 8,
+  heroRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  heroCopyWrap: {
+    flex: 1,
   },
   valueWithIcon: {
     flexDirection: 'row',

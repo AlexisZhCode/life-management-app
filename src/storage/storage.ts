@@ -7,7 +7,7 @@ export const defaultAppData = (): AppData => ({
   tasks: [
     {
       id: 'welcome-1',
-      title: 'Explore Lifekit and set your first goal',
+      title: 'Explore LifeKit and set your first goal',
       category: 'personal',
       completed: false,
       createdAt: new Date().toISOString(),

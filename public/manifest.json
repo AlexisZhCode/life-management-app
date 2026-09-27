@@ -1,6 +1,6 @@
 {
-  "name": "Lifekit",
-  "short_name": "Lifekit",
+  "name": "LifeKit",
+  "short_name": "LifeKit",
   "description": "A gentle life management app",
   "id": "./",
   "start_url": "./",
@@ -9,6 +9,12 @@
   "background_color": "#FFF6F0",
   "theme_color": "#FFF6F0",
   "icons": [
+    {
+      "src": "./apple-touch-icon-lifekit.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
     {
       "src": "./icon-192.png",
       "sizes": "192x192",
