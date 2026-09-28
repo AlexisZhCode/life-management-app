@@ -11,7 +11,8 @@ import { useNavigation } from '@react-navigation/native';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
-import { BambooGrove } from '../components/BambooGrove';
+import { BeaverScene } from '../components/BeaverScene';
+import type { BeaverScarf } from '../components/BeaverCharacter';
 import { BloomIcon } from '../icons/BloomIcon';
 import { CoinBadge } from '../components/CoinBadge';
 import { useApp } from '../context/AppContext';
@@ -31,6 +32,7 @@ export function HomeScreen() {
   const { data, toggleTask, completeHabit } = useApp();
   const today = todayKey();
   const [showDone, setShowDone] = useState(true);
+  const [scarf, setScarf] = useState<BeaverScarf>('red');
 
   const goals = useMemo(() => {
     const tasks: Goal[] = data.tasks
@@ -65,7 +67,7 @@ export function HomeScreen() {
           contentContainerStyle={styles.scroll}
         >
           <View>
-            <BambooGrove width={width} />
+            <BeaverScene width={width} scarf={scarf} onScarf={setScarf} />
             <View style={styles.badge}>
               <CoinBadge coins={data.stats.coins} streak={data.stats.currentStreak} />
             </View>
@@ -82,7 +84,7 @@ export function HomeScreen() {
                   </Svg>
                 </View>
                 <View style={styles.progressCopy}>
-                  <Text style={styles.progressTitle}>Today in the grove</Text>
+                  <Text style={styles.progressTitle}>Today at the lodge</Text>
                   <View style={styles.track}>
                     <View
                       style={[
@@ -122,7 +124,7 @@ export function HomeScreen() {
 
             {visible.length === 0 ? (
               <View style={styles.empty}>
-                <Text style={styles.emptyTitle}>The grove is quiet</Text>
+                <Text style={styles.emptyTitle}>The lodge is quiet</Text>
                 <Text style={styles.emptyCopy}>Add a task or a habit to start the day.</Text>
               </View>
             ) : (
